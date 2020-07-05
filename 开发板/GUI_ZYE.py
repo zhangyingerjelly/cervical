@@ -11,6 +11,7 @@ from PIL import Image, ImageTk
 import datetime
 import os
 import time
+import preresnet
 #from classification import model_predict
 from preprocess import blur_detect
 from preprocess import clip
@@ -19,7 +20,7 @@ from preprocess import detect
 white       = "#ffffff"
 lightBlue2  = "#adc5ed"
 font        = "Constantia"
-fontButtons = (font, 12)
+fontButtons = (font, 14)
 maxWidth    = 1200
 maxHeight   = 680
 flag        = 1 #used to judge whether to imshow the video or just a picture
@@ -29,7 +30,7 @@ capture=cv2.VideoCapture(0)
 from PIL import Image
 import torchvision.transforms as transforms
 import torch
-PATH='/home/are/pytorch/resnet50_new.pth' # load in advance, save time
+PATH='/home/are/code/pruned_whole.pth' # load in advance, save time
 net=torch.load(PATH,map_location='cpu')
 print(net)
 net.eval()
@@ -54,7 +55,7 @@ def cameravideo():
 	#print('enter')
 	global startButton
 	#startButton = Button(mainWindow,text="check_frame",font=fontButtons,width=15,height=1,command=lambda:check_frame_button())
-	startButton.place(x=maxWidth*0.65,y=maxHeight*0.15)    
+	startButton.place(x=maxWidth*0.62,y=maxHeight*0.15)    
 	alltext = 'capture image'
 	receive_from_detect.config(text=alltext)
        
@@ -110,12 +111,12 @@ def check_frame_button():
 		alltext = "Image blur,please recollect"
 		receive_from_detect.config(text=alltext,fg="red")
 		#recollectButton=Button(mainWindow,text="collect again",font=fontButtons,width=15,height=1,command=recollect)
-		recollectButton.place(x=maxWidth*0.65,y=maxHeight*0.25)
+		recollectButton.place(x=maxWidth*0.62,y=maxHeight*0.25)
 	else:
 		alltext = 'quality test pass and waiting......'
 		receive_from_detect.config(text=alltext,fg="green")
 		clip_frameButton=Button(mainWindow,text="clip",font=fontButtons,width=15,height=1,command=lambda:clipframe(cv2image))
-		clip_frameButton.place(x=maxWidth*0.65,y=maxHeight*0.35)
+		clip_frameButton.place(x=maxWidth*0.62,y=maxHeight*0.35)
 		
 
 
@@ -189,9 +190,9 @@ def clipframe(img):
 	display_window_img.imgtk = imgtk
 	display_window_img.configure(image=imgtk)
 	#cv2image = cv2.cvtColor(clip_img, cv2.COLOR_BGR2RGB) #
-	recollectButton.place(x=maxWidth*0.65,y=maxHeight*0.25)
+	recollectButton.place(x=maxWidth*0.62,y=maxHeight*0.25)
 	predict_frameButton=Button(mainWindow,text="predict",font=fontButtons,width=15,height=1,command=lambda:predict_frame(clip_img))
-	predict_frameButton.place(x=maxWidth*0.65,y=maxHeight*0.45)
+	predict_frameButton.place(x=maxWidth*0.62,y=maxHeight*0.45)
 
 
 def predict_img(img):  #input :cv2 img
@@ -287,8 +288,8 @@ closeButton = Button(mainWindow,text="close",font=fontButtons,width=5,height=1,c
 #closeButton.configure(command=lambda: mainWindow.destroy())              
 closeButton.place(x=maxWidth*0.03,y=maxHeight*0.89)
 
-receive_from_detect = Label(mainWindow,text=alltext,width=50,height=2)
-receive_from_detect.place(x=maxWidth*0.15,y=maxHeight*0.89)
+receive_from_detect = Label(mainWindow,text=alltext,font=fontButtons,width=50,height=2)
+receive_from_detect.place(x=maxWidth*0.15,y=maxHeight*0.82)
 mainFrame=Frame(mainWindow)
 mainFrame.place(x=maxWidth*0.045, y=maxHeight*0.035) 
 display_window_img = tk.Label(mainFrame)
@@ -298,14 +299,14 @@ show_frame()
 restartButton = Button(mainWindow,text="update",font=fontButtons,width=8,height=1,command=lambda: rechoose())   
 restartButton.place(x=maxWidth*0.03,y=maxHeight*0.8)
 
-predict_result = Label(mainWindow,text=pred_chinese,width=30,height=2)
-predict_result.place(x=maxWidth*0.2,y=maxHeight*0.79)
+predict_result = Label(mainWindow,text=pred_chinese,font=("Constantia",16),width=30,height=2)
+predict_result.place(x=maxWidth*0.65,y=maxHeight*0.82)
 var = IntVar()            #用来表示按钮是否选中
-check1 = Radiobutton(mainWindow,text='内窥镜实时拍摄模式',variable=var,value=1,width=18,height=2)
+check1 = Radiobutton(mainWindow,text='camera mode',font=fontButtons,variable=var,value=1,width=15,height=1)
 check1.configure(command=cameravideo)
-check2 = Radiobutton(mainWindow,text='已诊断图片导入模式',variable=var,value=2,width=18,height=2)
+check2 = Radiobutton(mainWindow,text='image mode',font=fontButtons,variable=var,value=2,width=15,height=1)
 check2.configure(command=choosefile)
-check1.place(x=maxWidth*0.65,y=maxHeight*0.05)
+check1.place(x=maxWidth*0.62,y=maxHeight*0.05)
 check2.place(x=maxWidth*0.82,y=maxHeight*0.05)
 startButton = Button(mainWindow,text="check_frame",font=fontButtons,width=15,height=1,command=lambda:check_frame_button())
 recollectButton=Button(mainWindow,text="collect again",font=fontButtons,width=15,height=1,command=recollect)
